@@ -1039,7 +1039,7 @@ Write in an elegant, warm tone — as if a wise elder speaks directly to the que
     const r=await fetch('https://korea-oracle.hwangko.workers.dev',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'anthropic/claude-sonnet-4-5',max_tokens:3000,messages:[{role:'system',content:'당신은 주역 상담가입니다. 응답은 반드시 800자 이내로 간결하게 작성하세요.'},{role:'user',content:prompt}]})
+      body:JSON.stringify({model:'openai/gpt-4o-mini',max_tokens:3000,messages:[{role:'system',content:'당신은 주역 상담가입니다. 응답은 반드시 800자 이내로 간결하게 작성하세요.'},{role:'user',content:prompt}]})
     });
     if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error('API 오류 '+r.status+': '+(e?.error?.message||r.statusText));}
     const d=await r.json();
