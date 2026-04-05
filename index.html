@@ -191,6 +191,7 @@ textarea:focus{outline:none;border-color:var(--gold);}
     <div class="hdr-sub" id="hdrSub">5,000년 동양의 지혜</div>
     <div class="hdr-by">Korean Oracle · since 2025</div>
     <button class="lang-switch" id="langSwitch" onclick="goHome()">🌐 언어변경</button>
+    <button class="lang-switch" onclick="showApiKeyModal()" style="margin-top:4px;">🔑 API 키 설정</button>
   </div>
   <div class="tabs">
     <button class="tab active" id="tb0" onclick="sTab(0)">☯ <span id="tab0Txt">점괘</span></button>
@@ -612,6 +613,9 @@ function renderTodayHex(){
 }
 
 function sResTab(i){
+  if(i===2 && !localStorage.getItem('jy_api_key') && !document.getElementById('aibody').textContent) {
+    // AI 탭인데 키 없으면 모달
+  }
   [0,1,2].forEach(j=>{
     document.getElementById('rtab'+j).classList.toggle('active',j===i);
     document.getElementById('rpanel'+j).classList.toggle('active',j===i);
@@ -1030,7 +1034,14 @@ Offer 2-3 specific, practical actions based on this reading.
 Write in an elegant, warm tone — as if a wise elder speaks directly to the questioner.`;
   }
 
-  const apiKey='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';
+  const apiKey = localStorage.getItem('jy_api_key') || '';
+  if(!apiKey) {
+    document.getElementById('aiload').classList.add('hidden');
+    const ae = document.getElementById('aierr');
+    ae.innerHTML = '⚠️ API 키가 없습니다. 아래 설정 버튼을 눌러 키를 입력해주세요.<br><button onclick="showApiKeyModal()" style="margin-top:8px;padding:8px 16px;background:var(--gold);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;">🔑 API 키 입력</button>';
+    ae.classList.remove('hidden');
+    return;
+  }
   try{
     const r=await fetch('https://openrouter.ai/api/v1/chat/completions',{
       method:'POST',
@@ -1270,7 +1281,14 @@ function saveApiKey(){
   if(!k||!k.startsWith('sk-or')){alert('올바른 OpenRouter 키를 입력해주세요. (sk-or-v1-... 형태)');return;}
   localStorage.setItem('jy_api_key',k);
   document.getElementById('apiModal').remove();
-  askAI();
+  // AI 상담 탭으로 이동 후 재시도
+  if(cMH) {
+    sResTab(2);
+    document.getElementById('aierr').classList.add('hidden');
+    document.getElementById('aibody').classList.add('hidden');
+    document.getElementById('aiload').classList.remove('hidden');
+    renderInterp(cMH, cZH, cCI, cML, cZL);
+  }
 }
 </script>
 </body>
