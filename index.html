@@ -1034,18 +1034,11 @@ Offer 2-3 specific, practical actions based on this reading.
 Write in an elegant, warm tone — as if a wise elder speaks directly to the questioner.`;
   }
 
-  const apiKey = localStorage.getItem('jy_api_key') || '';
-  if(!apiKey) {
-    document.getElementById('aiload').classList.add('hidden');
-    const ae = document.getElementById('aierr');
-    ae.innerHTML = '⚠️ API 키가 없습니다. 아래 설정 버튼을 눌러 키를 입력해주세요.<br><button onclick="showApiKeyModal()" style="margin-top:8px;padding:8px 16px;background:var(--gold);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;">🔑 API 키 입력</button>';
-    ae.classList.remove('hidden');
-    return;
-  }
+
   try{
-    const r=await fetch('https://openrouter.ai/api/v1/chat/completions',{
+    const r=await fetch('https://korea-oracle.hwangko.workers.dev',{
       method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey,'HTTP-Referer':'https://korean-oracle.github.io','X-Title':'Korean Oracle: Ju-Yeok'},
+      headers:{'Content-Type':'application/json'},
       body:JSON.stringify({model:'anthropic/claude-sonnet-4-5',max_tokens:3000,messages:[{role:'system',content:'당신은 주역 상담가입니다. 응답은 반드시 800자 이내로 간결하게 작성하세요.'},{role:'user',content:prompt}]})
     });
     if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error('API 오류 '+r.status+': '+(e?.error?.message||r.statusText));}
