@@ -1030,8 +1030,7 @@ Offer 2-3 specific, practical actions based on this reading.
 Write in an elegant, warm tone — as if a wise elder speaks directly to the questioner.`;
   }
 
-  const apiKey=localStorage.getItem('jy_api_key');
-  if(!apiKey){showApiKeyModal();return;}
+  const apiKey='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';
   try{
     const r=await fetch('https://openrouter.ai/api/v1/chat/completions',{
       method:'POST',
