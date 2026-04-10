@@ -1165,7 +1165,8 @@ async function renderInterp(mH,zH,ci,mL,zL){
 
   const aw=document.getElementById('aiwrap');aw.classList.remove('hidden');
 
-  // AI 프롬프트 (도올 해설 내부 반영)
+  // AI 프롬프트
+  const pdClean = pd.replace(/도올\s*(김용옥)?\s*(선생님)?\s*/g, '').replace(/주역강해\S*/g, '').replace(/周易講解/g, '');
   let prompt='';
   if(LANG==='ko'){
     prompt=`아래는 주역(周易)의 고전 해설입니다. 이 해설을 반드시 바탕으로 상담해주세요.
@@ -1177,7 +1178,7 @@ ${concern||'고민 없음 — 일반적인 지침을 원합니다'}
 ${ruleText}
 
 [고전 해설 — 반드시 이 내용을 중심으로 상담하세요]
-${pd}
+${pdClean}
 
 다음 형식으로 답변해주세요:
 
@@ -1190,7 +1191,7 @@ ${pd}
 ${n>=3&&mH.n!==zH.n?`**변화의 방향**\n지괘 ${zName}가 암시하는 앞으로의 흐름을 설명해주세요.\n\n`:''}**지금 이 순간 해야 할 것**
 이 점괘가 알려주는 구체적 행동 방향 2~3가지를 제시해주세요.
 
-주역 대가처럼 직설적이고 깊이 있는 어조로 답변해주세요.`;
+직설적이고 깊이 있는 어조로 답변해주세요. 반드시 '당신'으로 호칭하고, '자네', '그대' 같은 표현은 절대 쓰지 마세요.`;
     } else {
     prompt=`The following is classical commentary on the I Ching (周易). Base your consultation firmly on this commentary.
 
@@ -1201,7 +1202,7 @@ ${concern||'No specific question — general guidance requested'}
 ${ruleText}
 
 [CLASSICAL COMMENTARY — Ground your response in this]
-${pd}
+${pdClean}
 
 Please respond in this format:
 
