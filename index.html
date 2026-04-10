@@ -292,17 +292,17 @@ textarea:focus{outline:none;border-color:var(--gold);}
       <button class="btn btn-p" id="startBtn" onclick="goS2()">산가지 뽑기 →</button>
     </div>
     <div id="s2" class="hidden">
-      <div class="card fade">
+      <div class="card fade" style="min-height:520px;display:flex;flex-direction:column;">
         <div class="sec-lbl" id="step2Lbl">STEP 02 · 효 뽑기</div>
         <div style="font-size:11px;color:var(--muted);line-height:1.7;margin-bottom:10px;" id="step2Desc">
           3번 뽑기로 음(陰)·양(陽)을 결정해요<br>
           <span style="color:var(--red)">3번 모두 같으면 변효(變爻)</span> — 괘가 바뀝니다
         </div>
         <div class="yarrow"><div class="sticks" id="stks"></div></div>
-        <div class="dstat" id="dst"></div>
+        <div class="dstat" id="dst" style="min-height:180px;"></div>
         <div class="ypanel" id="yp"></div>
+        <button class="btn btn-p" id="dbtn" onclick="doDraw()" style="margin-top:12px;"><span id="dtxt">첫 번째 변 뽑기</span></button>
       </div>
-      <button class="btn btn-p" id="dbtn" onclick="doDraw()"><span id="dtxt">첫 번째 변 뽑기</span></button>
     </div>
     <div id="s3" class="hidden">
       <!-- 결과 탭 -->
