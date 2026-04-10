@@ -292,17 +292,17 @@ textarea:focus{outline:none;border-color:var(--gold);}
       <button class="btn btn-p" id="startBtn" onclick="goS2()">산가지 뽑기 →</button>
     </div>
     <div id="s2" class="hidden">
-      <div class="card fade" style="min-height:520px;display:flex;flex-direction:column;">
+      <div class="card fade">
         <div class="sec-lbl" id="step2Lbl">STEP 02 · 효 뽑기</div>
         <div style="font-size:11px;color:var(--muted);line-height:1.7;margin-bottom:10px;" id="step2Desc">
           3번 뽑기로 음(陰)·양(陽)을 결정해요<br>
           <span style="color:var(--red)">3번 모두 같으면 변효(變爻)</span> — 괘가 바뀝니다
         </div>
         <div class="yarrow"><div class="sticks" id="stks"></div></div>
-        <div class="dstat" id="dst" style="min-height:180px;"></div>
+        <div class="dstat" id="dst"></div>
         <div class="ypanel" id="yp"></div>
-        <button class="btn btn-p" id="dbtn" onclick="doDraw()" style="margin-top:12px;"><span id="dtxt">첫 번째 변 뽑기</span></button>
       </div>
+      <button class="btn btn-p" id="dbtn" onclick="doDraw()"><span id="dtxt">첫 번째 변 뽑기</span></button>
     </div>
     <div id="s3" class="hidden">
       <!-- 결과 탭 -->
@@ -1168,7 +1168,7 @@ async function renderInterp(mH,zH,ci,mL,zL){
   // AI 프롬프트 (도올 해설 내부 반영)
   let prompt='';
   if(LANG==='ko'){
-    prompt=`아래는 도올 김용옥 선생님의 주역강해(周易講解)에서 발췌한 실제 해설입니다. 이 해설을 반드시 바탕으로 상담해주세요.
+    prompt=`아래는 주역(周易)의 고전 해설입니다. 이 해설을 반드시 바탕으로 상담해주세요.
 
 [질문자의 고민]
 ${concern||'고민 없음 — 일반적인 지침을 원합니다'}
@@ -1176,13 +1176,13 @@ ${concern||'고민 없음 — 일반적인 지침을 원합니다'}
 [해석 규칙]
 ${ruleText}
 
-[도올 선생님의 실제 해설 — 반드시 이 내용을 중심으로 상담하세요]
+[고전 해설 — 반드시 이 내용을 중심으로 상담하세요]
 ${pd}
 
 다음 형식으로 답변해주세요:
 
-**도올의 해설이 전하는 메시지**
-위 도올 선생님 해설의 핵심을 바탕으로, 이 효사가 질문자에게 전하는 가장 깊은 메시지를 설명해주세요. 도올 선생님의 철학적 관점을 살려주세요.
+**이 효사가 전하는 메시지**
+위 해설의 핵심을 바탕으로, 이 효사가 질문자에게 전하는 가장 깊은 메시지를 설명해주세요. 주역의 철학적 관점을 살려주세요.
 
 **질문자의 고민과 연결**
 "${concern||'현재 상황'}"이라는 고민을 효사의 의미와 구체적으로 연결해 주세요. 추상적 위로가 아닌 실질적 통찰을 주세요.
@@ -1190,9 +1190,9 @@ ${pd}
 ${n>=3&&mH.n!==zH.n?`**변화의 방향**\n지괘 ${zName}가 암시하는 앞으로의 흐름을 설명해주세요.\n\n`:''}**지금 이 순간 해야 할 것**
 이 점괘가 알려주는 구체적 행동 방향 2~3가지를 제시해주세요.
 
-도올 선생님처럼 직설적이고 깊이 있는 어조로 답변해주세요.`;
+주역 대가처럼 직설적이고 깊이 있는 어조로 답변해주세요.`;
     } else {
-    prompt=`The following is actual commentary from Do-ol Kim Yong-ok's "Ju-Yeok Ganghae" (周易講解), a landmark Korean scholarly interpretation of the I Ching. Base your consultation firmly on this commentary.
+    prompt=`The following is classical commentary on the I Ching (周易). Base your consultation firmly on this commentary.
 
 [QUESTIONER'S CONCERN]
 ${concern||'No specific question — general guidance requested'}
@@ -1200,13 +1200,13 @@ ${concern||'No specific question — general guidance requested'}
 [READING RULE]
 ${ruleText}
 
-[DO-OL'S ACTUAL COMMENTARY — Ground your response in this]
+[CLASSICAL COMMENTARY — Ground your response in this]
 ${pd}
 
 Please respond in this format:
 
 **The Deep Message of This Line**
-Drawing directly from Do-ol's commentary above, explain what this hexagram truly means for the questioner. Reflect the philosophical depth of classical Korean I Ching scholarship.
+Drawing from the classical commentary above, explain what this hexagram truly means for the questioner. Reflect the philosophical depth of I Ching scholarship.
 
 **How This Speaks to Your Concern**
 Connect the meaning of "${concern||'your current situation'}" to the specific insights in the commentary. Go beyond comfort — offer real wisdom.
