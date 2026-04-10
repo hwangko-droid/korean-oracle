@@ -11,7 +11,7 @@
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
-
+<link rel="manifest" href="/manifest.json">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -20,6 +20,30 @@
 <link rel="apple-touch-icon" href="/icon-192.svg">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&family=Noto+Sans+KR:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
+
+/* ── 스플래시 화면 ── */
+.splash{position:fixed;inset:0;background:#0f1420;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;}
+.splash.hide{animation:splashOut .8s ease forwards;}
+@keyframes splashOut{from{opacity:1;transform:scale(1);}to{opacity:0;transform:scale(1.05);}}
+.splash-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 30% 30%, rgba(44,62,107,0.8) 0%, transparent 60%), radial-gradient(ellipse at 70% 70%, rgba(180,140,80,0.3) 0%, transparent 60%);}
+.splash-sym{font-size:80px;z-index:1;animation:symPulse 2s ease-in-out infinite;margin-bottom:20px;}
+@keyframes symPulse{0%,100%{filter:drop-shadow(0 0 20px rgba(180,140,80,0.5));}50%{filter:drop-shadow(0 0 50px rgba(180,140,80,1));}}
+.splash-title{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;color:#fff;letter-spacing:4px;z-index:1;text-align:center;line-height:1.4;margin-bottom:8px;animation:fadeUp .8s ease .2s both;}
+.splash-title em{color:#B48C50;font-style:italic;}
+.splash-sub{font-size:13px;color:rgba(255,255,255,0.5);letter-spacing:3px;z-index:1;margin-bottom:48px;animation:fadeUp .8s ease .4s both;}
+.splash-hook{font-family:'Noto Serif KR',serif;font-size:16px;color:rgba(255,255,255,0.9);text-align:center;line-height:1.9;z-index:1;animation:fadeUp .8s ease .6s both;margin-bottom:48px;padding:0 20px;}
+.splash-hook strong{color:#B48C50;}
+.splash-features{display:flex;gap:20px;z-index:1;margin-bottom:40px;animation:fadeUp .8s ease .8s both;}
+.splash-feat{text-align:center;}
+.splash-feat .sf-icon{font-size:24px;margin-bottom:6px;}
+.splash-feat .sf-txt{font-size:10px;color:rgba(255,255,255,0.5);letter-spacing:1px;line-height:1.4;}
+.splash-progress{width:200px;height:2px;background:rgba(255,255,255,0.1);border-radius:1px;z-index:1;overflow:hidden;animation:fadeUp .8s ease 1s both;}
+.splash-bar{height:100%;background:linear-gradient(90deg,#B48C50,#d4a96a);border-radius:1px;animation:loadBar 3s ease forwards;}
+@keyframes loadBar{from{width:0%;}to{width:100%;}}
+.splash-skip{position:absolute;bottom:30px;right:24px;font-size:11px;color:rgba(255,255,255,0.3);z-index:1;cursor:pointer;letter-spacing:1px;border:none;background:none;animation:fadeUp .5s ease 1.2s both;}
+.splash-skip:hover{color:rgba(255,255,255,0.7);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:none;}}
+
 :root{--ink:#2a1f0e;--gold:#b48c50;--gold2:#d4a96a;--bg:#f5f0e8;--card:#fffdf8;--red:#9b2c2c;--blue:#2c4a7a;--muted:#9a8a70;--border:rgba(180,140,80,.25);}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',sans-serif;min-height:100vh;}
@@ -91,6 +115,24 @@ textarea:focus{outline:none;border-color:var(--gold);}
 .cd.y{background:var(--gold);border-color:var(--gold);}
 .cd.n{background:#aaa;border-color:#aaa;}
 .dstat{font-size:13px;color:var(--muted);text-align:center;margin:10px 0;min-height:20px;}
+.explain-box{background:linear-gradient(135deg,rgba(44,62,107,0.06),rgba(180,140,80,0.08));border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin:10px 0;animation:fd .3s ease;}
+.explain-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.explain-casts{display:flex;gap:4px;align-items:center;}
+.cast-dot{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;}
+.cast-yang{background:rgba(180,140,80,0.15);border-color:var(--gold);color:var(--gold);}
+.cast-yin{background:rgba(44,62,107,0.1);border-color:var(--blue);color:var(--blue);}
+.explain-arrow{color:var(--muted);font-size:12px;}
+.explain-result{font-size:13px;font-weight:600;}
+.explain-result.yang{color:var(--gold);}
+.explain-result.yin{color:var(--blue);}
+.explain-result.changeable{color:var(--red);}
+.explain-line{display:flex;align-items:center;gap:8px;}
+.line-shape{font-size:16px;letter-spacing:-2px;}
+.explain-badge{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:700;}
+.badge-ny{background:rgba(155,44,44,.1);color:var(--red);border:1px solid var(--red);}
+.badge-ne{background:rgba(44,62,107,.1);color:var(--blue);border:1px solid var(--blue);}
+.explain-change{font-size:11px;color:var(--red);margin-top:4px;padding:4px 8px;background:rgba(155,44,44,.06);border-radius:6px;}
+.explain-trigram{font-size:12px;color:var(--gold);font-weight:600;margin-top:6px;padding-top:6px;border-top:1px solid var(--border);}
 .hex-pair{display:flex;align-items:center;gap:12px;justify-content:center;margin:14px 0;}
 .hex-box{flex:1;text-align:center;}
 .hex-arr{font-size:20px;color:var(--gold);flex-shrink:0;}
@@ -161,6 +203,38 @@ textarea:focus{outline:none;border-color:var(--gold);}
 <body>
 
 <!-- 언어 선택 화면 -->
+<!-- ── 스플래시 화면 ── -->
+<div class="splash" id="splash">
+  <div class="splash-bg"></div>
+  <div class="splash-sym">☯</div>
+  <div class="splash-title">Korean Oracle:<br><em>Ju-Yeok</em></div>
+  <div class="splash-sub">ANCIENT KOREAN DIVINATION</div>
+  <div class="splash-hook">
+    당신의 고민, <strong>5,000년 전 지혜</strong>에게 물어보세요.<br>
+    <span style="font-size:13px;color:rgba(255,255,255,0.5);">Ask 5,000 years of Eastern wisdom about your concern.</span>
+  </div>
+  <div class="splash-features">
+    <div class="splash-feat">
+      <div class="sf-icon">🎋</div>
+      <div class="sf-txt">산가지<br>3변성괘법</div>
+    </div>
+    <div class="splash-feat">
+      <div class="sf-icon">☯</div>
+      <div class="sf-txt">64괘<br>384효사</div>
+    </div>
+    <div class="splash-feat">
+      <div class="sf-icon">✦</div>
+      <div class="sf-txt">AI<br>주역 상담</div>
+    </div>
+    <div class="splash-feat">
+      <div class="sf-icon">🆓</div>
+      <div class="sf-txt">완전<br>무료</div>
+    </div>
+  </div>
+  <div class="splash-progress"><div class="splash-bar"></div></div>
+  <button class="splash-skip" onclick="skipSplash()">건너뛰기 ›</button>
+</div>
+
 <div id="langScreen" class="lang-screen">
   <div class="lang-symbol">☯</div>
   <div class="lang-logo">ANCIENT KOREAN DIVINATION</div>
@@ -191,7 +265,6 @@ textarea:focus{outline:none;border-color:var(--gold);}
     <div class="hdr-sub" id="hdrSub">5,000년 동양의 지혜</div>
     <div class="hdr-by">Korean Oracle · since 2025</div>
     <button class="lang-switch" id="langSwitch" onclick="goHome()">🌐 언어변경</button>
-    <button class="lang-switch" onclick="showApiKeyModal()" style="margin-top:4px;">🔑 API 키 설정</button>
   </div>
   <div class="tabs">
     <button class="tab active" id="tb0" onclick="sTab(0)">☯ <span id="tab0Txt">점괘</span></button>
@@ -208,7 +281,7 @@ textarea:focus{outline:none;border-color:var(--gold);}
       <!-- 인트로 배너 -->
       <div class="intro-banner" id="introBanner">
         <span class="intro-sym">☯</span>
-        <div class="intro-main" id="introMain">3,000년 전 지혜로 오늘의 고민을 읽는다</div>
+        <div class="intro-main" id="introMain">5,000년 전 지혜로 오늘의 고민을 읽는다</div>
         <div class="intro-sub" id="introSub">음양의 원리로 64가지 변화 패턴 중 지금 나의 상황을 찾아드립니다</div>
       </div>
       <div class="card">
@@ -222,8 +295,8 @@ textarea:focus{outline:none;border-color:var(--gold);}
       <div class="card fade">
         <div class="sec-lbl" id="step2Lbl">STEP 02 · 효 뽑기</div>
         <div style="font-size:11px;color:var(--muted);line-height:1.7;margin-bottom:10px;" id="step2Desc">
-          3번 뽑기 · 홀수=양 ━━━ · 짝수=음 ━ ━<br>
-          <span style="color:var(--red)">노양 ○ (양3개) · 노음 ✕ (음3개)</span> = 변효
+          3번 뽑기로 음(陰)·양(陽)을 결정해요<br>
+          <span style="color:var(--red)">3번 모두 같으면 변효(變爻)</span> — 괘가 바뀝니다
         </div>
         <div class="yarrow"><div class="sticks" id="stks"></div></div>
         <div class="dstat" id="dst"></div>
@@ -259,7 +332,7 @@ textarea:focus{outline:none;border-color:var(--gold);}
       </div>
       <div style="display:flex;gap:8px;margin-bottom:14px;margin-top:12px;">
         <button class="btn btn-s" id="saveBtn" onclick="saveRec()" style="font-size:13px;">저장</button>
-        
+        <button class="btn btn-p" onclick="openShare()" style="font-size:13px;flex:1;" id="shareBtn">🔗 공유</button>
         <button class="btn btn-s" id="newBtn" onclick="resetAll()" style="font-size:13px;">새 점괘</button>
       </div>
     </div>
@@ -497,7 +570,7 @@ const T = {
     tab0: '점괘', tab1: '기록',
     step1lbl: 'STEP 01 · 고민 입력',
     step1desc: '지금 마음에 걸리는 것을 적어주세요. 구체적일수록 더 깊은 답을 드릴 수 있어요.',
-    introMain: '3,000년 전 지혜로 오늘의 고민을 읽는다',
+    introMain: '5,000년 전 지혜로 오늘의 고민을 읽는다',
     introSub: '음양의 원리로 64가지 변화 패턴 중 지금 나의 상황을 찾아드립니다',
     whyTitle: '🤔 왜 18번이나 눌러야 하나요? (터치하면 설명)',
     whyDetail18: '효(爻) 1개 = 3번 / 괘(卦) = 효 6개 / 3 × 6 = 총 18번',
@@ -613,14 +686,22 @@ function renderTodayHex(){
 }
 
 function sResTab(i){
-  if(i===2 && !localStorage.getItem('jy_api_key') && !document.getElementById('aibody').textContent) {
-    // AI 탭인데 키 없으면 모달
-  }
   [0,1,2].forEach(j=>{
     document.getElementById('rtab'+j).classList.toggle('active',j===i);
     document.getElementById('rpanel'+j).classList.toggle('active',j===i);
   });
 }
+
+// ── 스플래시 ──
+function skipSplash(){
+  const s=document.getElementById('splash');
+  s.classList.add('hide');
+  setTimeout(()=>s.style.display='none', 800);
+}
+
+window.addEventListener('load',()=>{
+  setTimeout(skipSplash, 5000);
+});
 
 function toggleWhy(el){
   const detail = el.querySelector('.why-detail');
@@ -674,7 +755,7 @@ function updateUI() {
   const introMainEl = document.getElementById('introMain');
   const introSubEl = document.getElementById('introSub');
   const whyTitleEl = document.getElementById('whyTitle');
-  if(introMainEl) introMainEl.textContent = isEn ? 'Ancient wisdom for today\'s questions' : '3,000년 전 지혜로 오늘의 고민을 읽는다';
+  if(introMainEl) introMainEl.textContent = isEn ? 'Ancient wisdom for today\'s questions' : '5,000년 전 지혜로 오늘의 고민을 읽는다';
   if(introSubEl) introSubEl.textContent = isEn ? 'The 64 hexagrams hold every human situation — which one is yours?' : '음양의 원리로 64가지 변화 패턴 중 지금 나의 상황을 찾아드립니다';
   if(whyTitleEl) whyTitleEl.textContent = isEn ? '🤔 Why press 18 times? (tap to learn)' : '🤔 왜 18번이나 눌러야 하나요? (터치하면 설명)';
   // 18번 이유 설명 영어 업데이트
@@ -780,23 +861,125 @@ function updSt(){
   if(!st||!bt)return;
   const last=draws[draws.length-1],yi=draws.length-1;
   if(!last||last.length===0)return;
+
+  const isKo = LANG==='ko';
+  const yangTxt = isKo?'양(陽)':'Yang';
+  const yinTxt  = isKo?'음(陰)':'Yin';
+
+  // 변 결과를 음양 텍스트로
+  function castTxt(v){ return v ? yangTxt : yinTxt; }
+  function castClass(v){ return v ? 'cast-yang' : 'cast-yin'; }
+
+  // 캐스트 도트 HTML
+  function castDots(arr){
+    return arr.map(v=>`<div class="cast-dot ${castClass(v)}">${v?'陽':'陰'}</div>`).join('');
+  }
+
   if(last.length<3){
+    // 1변 또는 2변 — 뽑은 결과 보여주기
     const vi=last.length-1;
-    const castName=t('cast')[vi]||'';
-    st.textContent=LANG==='ko'
-      ? `${yi+1}효 ${castName} 변: ${last[vi]?t('yangStr'):t('yinStr')}`
-      : `Line ${yi+1} · ${castName} cast: ${last[vi]?t('yangStr'):t('yinStr')}`;
-    bt.textContent=LANG==='ko'
-      ? `${yi+1}효 ${t('cast')[vi]||''} 번째 변 뽑기`
-      : t('drawBtn')[vi]||'';
+    const v=last[vi];
+    const castNum=['첫','두','세'];
+    const castNumEn=['1st','2nd','3rd'];
+
+    let html=`<div class="explain-box">`;
+    html+=`<div class="explain-row"><div class="explain-casts">${castDots(last)}</div>`;
+    html+=`<span class="explain-arrow">→</span>`;
+    html+=`<span class="explain-result ${v?'yang':'yin'}">${castTxt(v)} ${v?'━━━':'━ ━'}</span></div>`;
+    html+=`<div style="font-size:11px;color:var(--muted)">${isKo?`${yi+1}효 ${castNum[vi]}번째 변`:`Line ${yi+1} · ${castNumEn[vi]} cast`}</div>`;
+    html+=`</div>`;
+    st.innerHTML=html;
+
+    bt.textContent=isKo
+      ? `${yi+1}효 ${['두','세'][vi]}번째 변 뽑기`
+      : t('drawBtn')[vi+1]||'';
+
   } else {
+    // 3변 완성 — 효 타입 결정 및 설명
     const tp=yT(last);
-    const lb={ny:t('nyStr'),ne:t('neStr'),sy:t('syStr'),se:t('seStr')};
-    st.innerHTML=LANG==='ko'
-      ? `${yi+1}효: <strong>${lb[tp]}</strong>`
-      : `Line ${yi+1}: <strong>${lb[tp]}</strong>`;
+    const isChg=iC(tp);
+    const lineVal=tV(tp); // 본괘 효 값 (0=음, 1=양)
+    const lineZVal=tZ(tp); // 지괘 효 값
+
+    // 효 타입 설명
+    const typeInfo = {
+      ny:{ko:'노양(老陽) ○',en:'Old Yang ○',shape:'━━━',cls:'yang',changeTo:'━ ━',changeToEn:'Yin ━ ━'},
+      ne:{ko:'노음(老陰) ✕',en:'Old Yin ✕',shape:'━ ━',cls:'yin',changeTo:'━━━',changeToEn:'Yang ━━━'},
+      sy:{ko:'소양(少陽)',en:'Young Yang',shape:'━━━',cls:'yang',changeTo:null},
+      se:{ko:'소음(少陰)',en:'Young Yin',shape:'━ ━',cls:'yin',changeTo:null},
+    };
+    const info=typeInfo[tp];
+
+    let html=`<div class="explain-box">`;
+    // 3변 결과
+    html+=`<div class="explain-row"><div class="explain-casts">${castDots(last)}</div>`;
+    html+=`<span class="explain-arrow">→</span>`;
+    html+=`<span class="explain-result ${isChg?'changeable':info.cls}">${isKo?info.ko:info.en}</span>`;
+    if(isChg) html+=`<span class="explain-badge ${tp==='ny'?'badge-ny':'badge-ne'}">${isKo?'변효!':'Changing!'}</span>`;
+    html+=`</div>`;
+
+    // 효 모양
+    html+=`<div class="explain-line"><span class="line-shape" style="color:${isChg?'var(--red)':tp==='sy'||tp==='ny'?'var(--gold)':'var(--blue)'}">${info.shape}</span>`;
+    html+=`<span style="font-size:12px;color:var(--muted)">${yi+1}효 완성</span></div>`;
+
+    // 변효면 변화 설명
+    if(isChg){
+      const changeMsg = tp==='ny'
+        ? (isKo?'양이 극에 달했어요 → 음으로 바뀝니다':'Yang at its peak → transforms to Yin')
+        : (isKo?'음이 극에 달했어요 → 양으로 바뀝니다':'Yin at its peak → transforms to Yang');
+      html+=`<div class="explain-change">${changeMsg}<br>`;
+      html+=`<span style="font-size:11px">${isKo?'본괘':'Original'}: ${info.shape} → ${isKo?'지괘':'Changed'}: ${info.changeTo}</span></div>`;
+    }
+
+    // 3효가 쌓이면 하괘 팔괘 설명
+    if(yi===2 && draws.length>=3){
+      const lo3=[draws[0],draws[1],draws[2]].map(th=>tV(yT(th)));
+      const loIdx=lo3[2]*4+lo3[1]*2+lo3[0];
+      const B2I_arr=[1,4,2,7,6,3,5,0];
+      const trigramNames={
+        0:{ko:'건(乾) ☰ 하늘',en:'Qian ☰ Heaven'},
+        1:{ko:'곤(坤) ☷ 땅',en:'Kun ☷ Earth'},
+        2:{ko:'감(坎) ☵ 물',en:'Kan ☵ Water'},
+        3:{ko:'리(離) ☲ 불',en:'Li ☲ Fire'},
+        4:{ko:'진(震) ☳ 우레',en:'Zhen ☳ Thunder'},
+        5:{ko:'손(巽) ☴ 바람',en:'Xun ☴ Wind'},
+        6:{ko:'간(艮) ☶ 산',en:'Gen ☶ Mountain'},
+        7:{ko:'태(兌) ☱ 연못',en:'Dui ☱ Lake'},
+      };
+      const trigramIdx=B2I_arr[loIdx];
+      const tn=trigramNames[trigramIdx];
+      html+=`<div class="explain-trigram">`;
+      html+=`${isKo?'하괘':'Lower Trigram'}: ${isKo?tn.ko:tn.en}`;
+      html+=`</div>`;
+    }
+
+    // 6효가 쌓이면 상괘 팔괘 + 최종 괘 설명
+    if(yi===5 && draws.length===6){
+      const hi3=[draws[3],draws[4],draws[5]].map(th=>tV(yT(th)));
+      const hiIdx=hi3[2]*4+hi3[1]*2+hi3[0];
+      const B2I_arr=[1,4,2,7,6,3,5,0];
+      const trigramNames={
+        0:{ko:'건(乾) ☰ 하늘',en:'Qian ☰ Heaven'},
+        1:{ko:'곤(坤) ☷ 땅',en:'Kun ☷ Earth'},
+        2:{ko:'감(坎) ☵ 물',en:'Kan ☵ Water'},
+        3:{ko:'리(離) ☲ 불',en:'Li ☲ Fire'},
+        4:{ko:'진(震) ☳ 우레',en:'Zhen ☳ Thunder'},
+        5:{ko:'손(巽) ☴ 바람',en:'Xun ☴ Wind'},
+        6:{ko:'간(艮) ☶ 산',en:'Gen ☶ Mountain'},
+        7:{ko:'태(兌) ☱ 연못',en:'Dui ☱ Lake'},
+      };
+      const trigramIdx=B2I_arr[hiIdx];
+      const tn=trigramNames[trigramIdx];
+      html+=`<div class="explain-trigram">`;
+      html+=`${isKo?'상괘':'Upper Trigram'}: ${isKo?tn.ko:tn.en}`;
+      html+=`</div>`;
+    }
+
+    html+=`</div>`;
+    st.innerHTML=html;
+
     if(draws.length<6){
-      bt.textContent=t('nextLine',draws.length+1);
+      bt.textContent=isKo?`${draws.length+1}효 첫 번째 변 뽑기`:`Cast Line ${draws.length+1}`;
     } else {
       bt.textContent=t('showResult');
       document.getElementById('dbtn').onclick=showResult;
@@ -985,7 +1168,7 @@ async function renderInterp(mH,zH,ci,mL,zL){
   // AI 프롬프트 (도올 해설 내부 반영)
   let prompt='';
   if(LANG==='ko'){
-    prompt=`당신은 주역의 대가입니다. 도올 김용옥의 주역강해를 깊이 이해하고 있습니다. 아래 점괘를 바탕으로 질문자에게 진심 어린 심층 상담을 해주세요.
+    prompt=`아래는 도올 김용옥 선생님의 주역강해(周易講解)에서 발췌한 실제 해설입니다. 이 해설을 반드시 바탕으로 상담해주세요.
 
 [질문자의 고민]
 ${concern||'고민 없음 — 일반적인 지침을 원합니다'}
@@ -993,23 +1176,23 @@ ${concern||'고민 없음 — 일반적인 지침을 원합니다'}
 [해석 규칙]
 ${ruleText}
 
-[핵심 괘효사 (심층)]
+[도올 선생님의 실제 해설 — 반드시 이 내용을 중심으로 상담하세요]
 ${pd}
 
 다음 형식으로 답변해주세요:
 
-**괘의 메시지**
-이 괘가 지금 질문자에게 전하는 핵심 메시지를 3~4문장으로 설명해주세요.
+**도올의 해설이 전하는 메시지**
+위 도올 선생님 해설의 핵심을 바탕으로, 이 효사가 질문자에게 전하는 가장 깊은 메시지를 설명해주세요. 도올 선생님의 철학적 관점을 살려주세요.
 
-**효사가 말하는 것**
-핵심 변효(또는 괘사)가 질문자의 고민 "${concern||'일반적 상황'}"과 어떻게 연결되는지 2~3문장으로 설명해주세요.
+**질문자의 고민과 연결**
+"${concern||'현재 상황'}"이라는 고민을 효사의 의미와 구체적으로 연결해 주세요. 추상적 위로가 아닌 실질적 통찰을 주세요.
 
-${n>=3&&mH.n!==zH.n?`**변화의 방향**\n지괘 ${zName}가 암시하는 앞으로의 흐름을 2~3문장으로 설명해주세요.\n\n`:''}**지금 해야 할 것**
-이 점괘를 바탕으로 질문자가 구체적으로 취해야 할 행동 2~3가지를 제시해주세요.
+${n>=3&&mH.n!==zH.n?`**변화의 방향**\n지괘 ${zName}가 암시하는 앞으로의 흐름을 설명해주세요.\n\n`:''}**지금 이 순간 해야 할 것**
+이 점괘가 알려주는 구체적 행동 방향 2~3가지를 제시해주세요.
 
-따뜻하고 깊이 있는 어조로, 마치 현명한 스승이 직접 말씀해주시는 것처럼 답변해주세요.`;
-  } else {
-    prompt=`You are a master of I Ching (Ju-Yeok), deeply versed in classical Korean interpretation. Based on the reading below, provide a sincere and insightful consultation.
+도올 선생님처럼 직설적이고 깊이 있는 어조로 답변해주세요.`;
+    } else {
+    prompt=`The following is actual commentary from Do-ol Kim Yong-ok's "Ju-Yeok Ganghae" (周易講解), a landmark Korean scholarly interpretation of the I Ching. Base your consultation firmly on this commentary.
 
 [QUESTIONER'S CONCERN]
 ${concern||'No specific question — general guidance requested'}
@@ -1017,34 +1200,32 @@ ${concern||'No specific question — general guidance requested'}
 [READING RULE]
 ${ruleText}
 
-[KEY LINES (Deep Interpretation)]
+[DO-OL'S ACTUAL COMMENTARY — Ground your response in this]
 ${pd}
 
 Please respond in this format:
 
-**The Message of the Hexagram**
-Explain the core message this hexagram holds for the questioner right now. 3-4 sentences.
+**The Deep Message of This Line**
+Drawing directly from Do-ol's commentary above, explain what this hexagram truly means for the questioner. Reflect the philosophical depth of classical Korean I Ching scholarship.
 
-**What the Lines Are Telling You**
-How do the key lines relate to the concern "${concern||'general guidance'}"? 2-3 sentences.
+**How This Speaks to Your Concern**
+Connect the meaning of "${concern||'your current situation'}" to the specific insights in the commentary. Go beyond comfort — offer real wisdom.
 
-${n>=3&&mH.n!==zH.n?`**The Direction of Change**\nWhat does the future hexagram ${zName} reveal about where things are heading? 2-3 sentences.\n\n`:''}**What You Should Do Now**
-Offer 2-3 specific, practical actions based on this reading.
+${n>=3&&mH.n!==zH.n?`**The Direction of Change**\nWhat does the future hexagram ${zName} reveal? Ground this in the overall reading.\n\n`:''}**What You Must Do Now**
+Offer 2-3 specific, grounded actions this reading calls for.
 
-Write in an elegant, warm tone — as if a wise elder speaks directly to the questioner.`;
+Write with the directness and depth of a classical I Ching master — not a chatbot.`;
   }
-
 
   try{
     const r=await fetch('https://korea-oracle.hwangko.workers.dev',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'openai/gpt-4o-mini',max_tokens:3000,messages:[{role:'system',content:'당신은 주역 상담가입니다. 응답은 반드시 800자 이내로 간결하게 작성하세요.'},{role:'user',content:prompt}]})
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({prompt})
     });
-    if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error('API 오류 '+r.status+': '+(e?.error?.message||r.statusText));}
+    if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error('API 오류 '+r.status+': '+(e?.error||r.statusText));}
     const d=await r.json();
-    if(d.error)throw new Error(d.error.message);
-    const txt=d?.choices?.[0]?.message?.content||'';
+    if(d.error)throw new Error(d.error);
+    const txt=d?.text||'';
     const html=txt.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').split('\n\n').map(p=>`<p>${p.replace(/\n/g,'<br>')}</p>`).join('');
     document.getElementById('aiload').classList.add('hidden');
     const ab=document.getElementById('aibody');ab.innerHTML=html;ab.classList.remove('hidden');
@@ -1165,46 +1346,76 @@ function getShareText(){
 오늘 뽑은 괘: ${hexName}
 
 5,000년 동양의 지혜로 내 고민을 풀어보세요!
-https://korean-oracle.netlify.app`;
+https://hwangko-droid.github.io/korean-oracle/`;
   } else {
     return `☯ Korean Oracle: Ju-Yeok
 
 Today's Hexagram: ${hexName}
 
 Discover 5,000 years of Eastern wisdom!
-https://korean-oracle.netlify.app`;
+https://hwangko-droid.github.io/korean-oracle/`;
   }
 }
 
+const APP_URL = 'https://hwangko-droid.github.io/korean-oracle/';
+
 function shareKakao(){
+  // 카카오톡: Web Share API 우선, 없으면 링크 복사
   const text = getShareText();
-  const url = 'https://korean-oracle.netlify.app';
-  // 카카오 SDK 없이 카카오톡 앱으로 공유
-  if(/Android|iPhone|iPad/i.test(navigator.userAgent)){
-    window.location.href = `kakaolink://send?text=${encodeURIComponent(text)}`;
-    setTimeout(()=>{
-      // 앱이 없으면 링크 복사로 대체
-      shareLink();
-    }, 1000);
+  if(navigator.share){
+    navigator.share({
+      title: 'Korean Oracle: Ju-Yeok',
+      text: LANG==='ko'
+        ? '☯ 5,000년 동양의 지혜로 내 고민을 풀어보세요!'
+        : '☯ Discover 5,000 years of Eastern wisdom!',
+      url: APP_URL
+    }).catch(()=>{ copyToClipboard(APP_URL); });
   } else {
-    shareLink();
+    // Web Share API 없으면 카카오톡 앱 스킴 시도
+    const kakaoUrl = `https://sharer.kakao.com/talk/friends/picker/link?app_key=none&link_ver=4.0&template_id=none&template_args=%7B%22url%22%3A%22${encodeURIComponent(APP_URL)}%22%7D`;
+    // 모바일이면 앱 스킴, 아니면 링크 복사
+    if(/Android|iPhone|iPad/i.test(navigator.userAgent)){
+      copyToClipboard(text);
+      const badge = document.getElementById('sbadge');
+      badge.textContent = LANG==='ko' ? '✓ 카카오톡에 붙여넣기 하세요!' : '✓ Paste in KakaoTalk!';
+      badge.style.display='block';
+      setTimeout(()=>{ badge.style.display='none'; badge.textContent=t('saveBadge'); }, 3000);
+    } else {
+      copyToClipboard(APP_URL);
+    }
   }
   closeShare();
 }
 
-function shareLink(){
-  const url = 'https://korean-oracle.netlify.app';
+function copyToClipboard(text){
   if(navigator.clipboard){
-    navigator.clipboard.writeText(url).then(()=>{
-      const badge = document.getElementById('sbadge');
-      badge.textContent = LANG==='ko' ? '✓ 링크가 복사됐어요!' : '✓ Link copied!';
-      badge.style.display='block';
-      setTimeout(()=>{
-        badge.style.display='none';
-        badge.textContent = t('saveBadge');
-      }, 2000);
+    navigator.clipboard.writeText(text).catch(()=>{
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
     });
+  } else {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
   }
+}
+
+function shareLink(){
+  copyToClipboard(APP_URL);
+  const badge = document.getElementById('sbadge');
+  badge.textContent = LANG==='ko' ? '✓ 링크가 복사됐어요!' : '✓ Link copied!';
+  badge.style.display='block';
+  setTimeout(()=>{
+    badge.style.display='none';
+    badge.textContent = t('saveBadge');
+  }, 2000);
   closeShare();
 }
 
@@ -1214,7 +1425,7 @@ function shareNative(){
     navigator.share({
       title: 'Korean Oracle: Ju-Yeok',
       text: LANG==='ko' ? '☯ 주역으로 내 고민을 풀어보세요!' : '☯ Discover your I Ching reading!',
-      url: 'https://korean-oracle.netlify.app'
+      url: APP_URL
     }).catch(()=>{});
   } else {
     shareLink();
@@ -1236,53 +1447,6 @@ function saveImage(){
   closeShare();
 }
 
-</script>
-
-<style>
-.api-modal-overlay{position:fixed;inset:0;background:rgba(42,31,14,.7);z-index:2000;display:flex;align-items:center;justify-content:center;padding:20px;}
-.api-modal{background:var(--card);border-radius:20px;padding:32px 24px;max-width:360px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.3);}
-.api-modal h3{font-family:'Cormorant Garamond';font-size:22px;color:var(--ink);margin-bottom:8px;}
-.api-modal p{font-size:12px;color:var(--muted);margin-bottom:20px;line-height:1.6;}
-.api-modal input{width:100%;padding:12px 16px;border:1.5px solid var(--border);border-radius:12px;font-size:13px;background:var(--bg);color:var(--ink);margin-bottom:12px;outline:none;}
-.api-modal input:focus{border-color:var(--gold);}
-.api-modal-btns{display:flex;gap:10px;}
-.api-modal-save{flex:1;padding:14px;background:var(--gold);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:500;cursor:pointer;}
-.api-modal-link{font-size:11px;color:var(--gold);text-decoration:none;display:block;margin-top:12px;}
-</style>
-
-<script>
-function showApiKeyModal(){
-  if(document.getElementById('apiModal'))return;
-  const overlay=document.createElement('div');
-  overlay.id='apiModal';
-  overlay.className='api-modal-overlay';
-  overlay.innerHTML=`<div class="api-modal">
-    <div style="font-size:40px;margin-bottom:12px;">🔑</div>
-    <h3>OpenRouter API Key</h3>
-    <p>AI 상담을 이용하려면 OpenRouter API 키가 필요합니다.<br>키는 이 기기에만 저장되며 외부로 전송되지 않습니다.</p>
-    <input type="password" id="apiKeyInput" placeholder="sk-or-v1-..." />
-    <div class="api-modal-btns">
-      <button class="api-modal-save" onclick="saveApiKey()">저장하고 시작하기</button>
-    </div>
-    <a href="https://openrouter.ai/keys" target="_blank" class="api-modal-link">→ OpenRouter에서 무료 키 발급받기</a>
-  </div>`;
-  document.body.appendChild(overlay);
-  setTimeout(()=>document.getElementById('apiKeyInput').focus(),100);
-}
-function saveApiKey(){
-  const k=document.getElementById('apiKeyInput').value.trim();
-  if(!k||!k.startsWith('sk-or')){alert('올바른 OpenRouter 키를 입력해주세요. (sk-or-v1-... 형태)');return;}
-  localStorage.setItem('jy_api_key',k);
-  document.getElementById('apiModal').remove();
-  // AI 상담 탭으로 이동 후 재시도
-  if(cMH) {
-    sResTab(2);
-    document.getElementById('aierr').classList.add('hidden');
-    document.getElementById('aibody').classList.add('hidden');
-    document.getElementById('aiload').classList.remove('hidden');
-    renderInterp(cMH, cZH, cCI, cML, cZL);
-  }
-}
 </script>
 </body>
 </html>
