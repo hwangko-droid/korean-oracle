@@ -301,6 +301,7 @@ textarea:focus{outline:none;border-color:var(--gold);}
         <div class="yarrow"><div class="sticks" id="stks"></div></div>
         <div class="dstat" id="dst"></div>
         <div class="ypanel" id="yp"></div>
+        <div id="explainWrap" style="min-height:180px;"></div>
       </div>
       <button class="btn btn-p" id="dbtn" onclick="doDraw()"><span id="dtxt">첫 번째 변 뽑기</span></button>
     </div>
@@ -800,6 +801,7 @@ function goS2(){
   document.getElementById('dtxt').textContent=t('drawBtn')[0];
   initStks();initYP();
   document.getElementById('dst').textContent='';
+  document.getElementById('explainWrap').innerHTML='';
 }
 
 function resetAll(){
@@ -857,7 +859,7 @@ function updYP(){
 
 function updSt(){
   if(!draws||draws.length===0)return;
-  const st=document.getElementById('dst'),bt=document.getElementById('dtxt');
+  const st=document.getElementById('explainWrap'),bt=document.getElementById('dtxt');
   if(!st||!bt)return;
   const last=draws[draws.length-1],yi=draws.length-1;
   if(!last||last.length===0)return;
