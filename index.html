@@ -198,6 +198,16 @@ textarea:focus{outline:none;border-color:var(--gold);}
 .why-detail strong{color:var(--ink);}
 .fade{animation:fd .4s ease;}
 @keyframes fd{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
+/* ── 타로 카드 오버레이 ── */
+.card-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9000;display:flex;flex-direction:column;align-items:center;justify-content:center;animation:cardFadeIn .5s ease;}
+@keyframes cardFadeIn{from{opacity:0;}to{opacity:1;}}
+.card-overlay.hide{animation:cardFadeOut .5s ease forwards;}
+@keyframes cardFadeOut{from{opacity:1;}to{opacity:0;}}
+.card-overlay img{width:min(280px,75vw);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.8);animation:cardSlideUp .5s ease;}
+@keyframes cardSlideUp{from{opacity:0;transform:translateY(30px) scale(0.92);}to{opacity:1;transform:translateY(0) scale(1);}}
+.card-overlay-skip{margin-top:24px;background:none;border:1px solid rgba(255,255,255,0.3);color:rgba(255,255,255,0.7);padding:10px 28px;border-radius:20px;font-size:13px;cursor:pointer;letter-spacing:1px;}
+.card-overlay-skip:hover{border-color:rgba(255,255,255,0.7);color:#fff;}
 </style>
 </head>
 <body>
@@ -1005,6 +1015,31 @@ function doDraw(){
   },480);
 }
 
+function showCardOverlay(hexNum){
+  var n=String(hexNum).padStart(2,'0');
+  var url='https://raw.githubusercontent.com/hwangko-droid/korean-oracle/main/cards/'+n+'.png';
+  var ov=document.createElement('div');
+  ov.className='card-overlay';
+  ov.id='cardOverlay';
+  var img=document.createElement('img');
+  img.src=url;
+  var btn=document.createElement('button');
+  btn.className='card-overlay-skip';
+  btn.textContent='건너뛰기 ›';
+  btn.onclick=dismissCardOverlay;
+  ov.appendChild(img);
+  ov.appendChild(btn);
+  document.body.appendChild(ov);
+  var t=setTimeout(dismissCardOverlay,5000);
+  ov._timer=t;
+}
+function dismissCardOverlay(){
+  var ov=document.getElementById('cardOverlay');
+  if(!ov)return;
+  if(ov._timer)clearTimeout(ov._timer);
+  ov.classList.add('hide');
+  setTimeout(function(){if(ov.parentNode)ov.remove();},500);
+}
 function showResult(){
   document.getElementById('d1').className='sd done';sResTab(0);
   document.getElementById('d2').className='sd active';
@@ -1013,6 +1048,7 @@ function showResult(){
   const mL=draws.map(th=>tV(yT(th))),zL=draws.map(th=>tZ(yT(th)));
   cML=mL;cZL=zL;cMH=l2h(mL);cZH=l2h(zL);
   cCI=draws.map((th,i)=>iC(yT(th))?i:-1).filter(i=>i>=0);
+  showCardOverlay(cMH.n);
   renderHex(mL,zL,cMH,cZH,cCI,cMH.n===cZH.n);
   renderInterp(cMH,cZH,cCI,mL,zL);
 }
