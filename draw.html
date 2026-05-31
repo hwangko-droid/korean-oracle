@@ -115,6 +115,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
   display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);
   padding:16px;gap:4px;transition:transform .1s}
 .die.rolling{animation:tumble .6s ease}
+.die.locked{cursor:default;pointer-events:none}
 @keyframes tumble{0%{transform:rotate(0) scale(1)}25%{transform:rotate(140deg) scale(1.1)}
   50%{transform:rotate(290deg) scale(.95)}75%{transform:rotate(430deg) scale(1.08)}100%{transform:rotate(540deg) scale(1)}}
 .pip{align-self:center;justify-self:center;width:16px;height:16px;border-radius:50%;
@@ -384,21 +385,26 @@ function drawDie(n){
   document.getElementById('die').innerHTML=html;
 }
 function goDice(){
-  yao=null;drawDie(1);document.getElementById('die').querySelectorAll('.pip').forEach(p=>p.classList.remove('on'));
+  yao=null;rolling=false;rolled=false;
+  const die=document.getElementById('die');
+  drawDie(1);die.querySelectorAll('.pip').forEach(p=>p.classList.remove('on'));
+  die.classList.remove('locked');
   document.getElementById('yaoresult').textContent='';
   document.getElementById('dice-cta').style.display='';
   document.getElementById('dice-next').style.display='none';
   show('dice');
 }
-let rolling=false;
+let rolling=false, rolled=false;
 function rollDice(){
-  if(rolling)return;rolling=true;
+  if(rolling||rolled)return;   // 이미 굴렸으면 다시 굴리지 못함
+  rolling=true;
   const die=document.getElementById('die');die.classList.remove('rolling');void die.offsetWidth;die.classList.add('rolling');
-  let n=0;const iv=setInterval(()=>{drawDie(Math.floor(Math.random()*6)+1);},80);
+  const iv=setInterval(()=>{drawDie(Math.floor(Math.random()*6)+1);},80);
   setTimeout(()=>{
-    clearInterval(iv);rolling=false;
+    clearInterval(iv);rolling=false;rolled=true;   // 결과 확정 후 잠금
     yao=Math.floor(Math.random()*6)+1;drawDie(yao);
-    document.getElementById('yaoresult').textContent=`${yao}효 · ${YAOLBL[yao]}`;
+    die.classList.add('locked');
+    document.getElementById('yaoresult').textContent=`${yao}효 · ${YAOLBL[yao]} — 오늘의 효가 정해졌습니다`;
     document.getElementById('dice-cta').style.display='none';
     document.getElementById('dice-next').style.display='';
   },640);
