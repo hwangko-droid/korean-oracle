@@ -314,7 +314,7 @@ const HEX={};
 DATA.forEach(r=>{ if(!HEX[r.no]) HEX[r.no]={no:r.no,name:r.name,hexa:r.hexa,lines:{}}; HEX[r.no].lines[r.yao]=r; });
 function kor(name){const m=(name||"").match(/\(([^)]+)\)/);return m?m[1]:"";}
 function pad2(n){return String(n).padStart(2,"0");}
-function cardImg(no){return "cards/"+pad2(no)+".jpg";}
+function cardImg(no){return "cards/"+pad2(no)+".webp";}
 
 // ---- storage ----
 function getCol(){try{return JSON.parse(localStorage.getItem("ko_col")||"[]");}catch(e){return [];}}
