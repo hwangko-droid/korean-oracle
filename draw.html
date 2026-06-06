@@ -522,7 +522,7 @@ function saveDraw(){
   addCol(pickedNo);
   const d=new Date();
   addLog({ts:d.getTime(),date:`${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`,
-    no:pickedNo,name:h.name,yao:yao,cat:cat.k,catE:cat.e,headline:e.headline});
+    no:pickedNo,name:h.name,yao:yao,cat:cat.k,catE:cat.e,headline:e.headline,catText:e[cat.k]});
   updateCounts();
   const n=getCol().length;
   toast(isNew?`새 카드 획득! 도감 ${n}/64 🃏`:`오늘 기록에 저장됨 📜 (도감 ${n}/64)`);
@@ -569,8 +569,7 @@ function renderLog(){
     return `<div class="logitem">
       <div class="d"><div class="dd">${p[2]}</div><div class="mm">${MON[(+p[1])-1]} ${p[0]}</div></div>
       <div class="info"><div class="c">${it.catE} ${it.cat}</div>
-        <div class="h">“${it.headline}”</div>
-        <div class="x">第${pad2(it.no)}卦 ${it.name} · ${YAOLBL[it.yao]}</div></div></div>`;
+        <div class="h">“${it.catText || it.headline}”</div></div></div>`;
   }).join('');
 }
 
