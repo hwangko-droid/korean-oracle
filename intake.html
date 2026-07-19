@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>심층 해석 신청 · 周易 KOREAN ORACLE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<script src="data/oracle-data.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>emailjs.init('qFeZmFP-IUADMQWD_');</script>
+<style>
+:root {
+  --ink:   #0B0D12;
+  --hanji: #F3EDDE;
+  --gold:  #C9A15E;
+  --red:   #A63A2E;
+  --smoke: #8B8677;
+  --line:  rgba(201,161,94,.18);
+  --ff-disp: 'Nanum Myeongjo', serif;
+  --ff-body: 'Gowun Dodum', sans-serif;
+  --ff-mono: 'JetBrains Mono', 'Courier New', monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--ink);
+  color: var(--hanji);
+  font-family: var(--ff-body);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2.5rem 1rem 4rem;
+}
+
+.brand {
+  font-family: var(--ff-mono);
+  font-size: .72rem;
+  letter-spacing: .18em;
+  color: var(--smoke);
+  margin-bottom: 2rem;
+  text-align: center;
+}
+.brand a { color: var(--smoke); text-decoration: none; transition: color .2s; }
+.brand a:hover { color: var(--gold); }
+
+.card {
+  width: 100%;
+  max-width: 520px;
+  background: #13151c;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 2rem 2rem 2.5rem;
+}
+
+.card-title {
+  font-family: var(--ff-disp);
+  font-size: 1.45rem;
+  color: var(--gold);
+  text-align: center;
+  margin-bottom: .4rem;
+}
+.card-sub {
+  font-size: .85rem;
+  color: var(--smoke);
+  text-align: center;
+  line-height: 1.6;
+  margin-bottom: 1.75rem;
+}
+
+.section-label {
+  font-family: var(--ff-mono);
+  font-size: .68rem;
+  color: var(--smoke);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-bottom: .75rem;
+}
+
+/* ── 카테고리 ── */
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: .5rem;
+  margin-bottom: 1.5rem;
+}
+.cat-btn {
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--smoke);
+  font-family: var(--ff-body);
+  font-size: .88rem;
+  padding: .65rem .4rem;
+  cursor: pointer;
+  transition: border-color .2s, color .2s, background .2s;
+}
+.cat-btn:hover { border-color: var(--gold); color: var(--hanji); }
+.cat-btn.active {
+  border-color: var(--gold);
+  background: rgba(201,161,94,.12);
+  color: var(--gold);
+}
+
+/* ── 자유 텍스트 ── */
+.situation-textarea {
+  width: 100%;
+  background: rgba(255,255,255,.03);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: var(--hanji);
+  font-family: var(--ff-body);
+  font-size: .88rem;
+  line-height: 1.65;
+  padding: .85rem 1rem;
+  resize: vertical;
+  min-height: 100px;
+  outline: none;
+  transition: border-color .2s;
+  margin-bottom: .5rem;
+}
+.situation-textarea::placeholder { color: var(--smoke); }
+.situation-textarea:focus { border-color: rgba(201,161,94,.45); }
+.situation-note {
+  font-size: .75rem;
+  color: var(--smoke);
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+}
+.situation-note em { color: var(--gold); font-style: normal; }
+
+/* ── 점치기 버튼 ── */
+.btn-cast {
+  width: 100%;
+  padding: .9rem;
+  border-radius: 99px;
+  border: 1.5px solid var(--gold);
+  background: transparent;
+  color: var(--gold);
+  font-family: var(--ff-body);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background .2s, color .2s;
+}
+.btn-cast:hover { background: var(--gold); color: var(--ink); }
+.btn-cast:disabled { opacity: .35; cursor: not-allowed; }
+
+/* ── 효 막대 보드 ── */
+.cast-board {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 10px;
+  min-height: 180px;
+  margin: 1.75rem 0;
+  align-items: center;
+  justify-content: flex-end;
+}
+.yao-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity .28s ease, transform .28s ease;
+}
+.yao-row.visible { opacity: 1; transform: translateY(0); }
+.yao-label {
+  font-family: var(--ff-mono);
+  font-size: .68rem;
+  color: var(--smoke);
+  width: 24px;
+  text-align: right;
+  flex-shrink: 0;
+}
+.yao-bar {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.yao-bar .seg {
+  height: 5px;
+  border-radius: 3px;
+  background: var(--gold);
+}
+.yao-bar.yang .seg { width: 72px; }
+.yao-bar.yin  .seg { width: 30px; }
+.yao-bar.changing .seg { background: var(--red); }
+.yao-num {
+  font-family: var(--ff-mono);
+  font-size: .65rem;
+  color: var(--red);
+  width: 14px;
+}
+
+/* ── 구분선 ── */
+.divider { border: none; border-top: 1px solid var(--line); margin: 1.5rem 0; }
+
+/* ── 결과 ── */
+.result-wrap { display: none; }
+.result-wrap.show { display: block; }
+
+/* 카드 리빌 */
+.card-reveal {
+  display: none;
+  justify-content: center;
+  margin: 1.5rem 0 .25rem;
+  perspective: 900px;
+}
+.card-reveal.show { display: flex; }
+.card-flip {
+  width: 170px;
+  height: 238px;
+  position: relative;
+  transform-style: preserve-3d;
+  transform: rotateY(180deg);
+  transition: transform .75s cubic-bezier(.4,0,.2,1);
+}
+.card-flip.revealed { transform: rotateY(0deg); }
+.card-face, .card-back {
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.card-face { overflow: hidden; }
+.card-face img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+  display: block;
+}
+.card-back {
+  background: #13151c;
+  border: 1px solid var(--line);
+  transform: rotateY(180deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  color: var(--smoke);
+}
+
+.result-badge {
+  display: inline-block;
+  font-family: var(--ff-mono);
+  font-size: .66rem;
+  letter-spacing: .1em;
+  color: var(--smoke);
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  padding: .18rem .65rem;
+  margin-bottom: .9rem;
+}
+.result-hexa {
+  font-family: var(--ff-disp);
+  font-size: 1.25rem;
+  color: var(--gold);
+  margin-bottom: .2rem;
+}
+.result-yao-label {
+  font-family: var(--ff-mono);
+  font-size: .7rem;
+  color: var(--smoke);
+  margin-bottom: .5rem;
+}
+.result-hj {
+  font-family: var(--ff-disp);
+  font-size: .92rem;
+  color: var(--hanji);
+  letter-spacing: .1em;
+  margin-bottom: .2rem;
+}
+.result-ko {
+  font-size: .88rem;
+  color: var(--hanji);
+  line-height: 1.65;
+  margin-bottom: 1.1rem;
+}
+.result-cat-box {
+  background: rgba(201,161,94,.07);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 1rem 1.1rem;
+  margin-bottom: 1rem;
+}
+.result-cat-label {
+  font-family: var(--ff-mono);
+  font-size: .66rem;
+  color: var(--gold);
+  letter-spacing: .08em;
+  margin-bottom: .35rem;
+}
+.result-cat-text {
+  font-size: .88rem;
+  color: var(--hanji);
+  line-height: 1.65;
+}
+
+/* 심층 상담 CTA */
+.deep-cta {
+  border: 1px solid rgba(201,161,94,.4);
+  border-radius: 12px;
+  padding: 1.1rem 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  cursor: pointer;
+  transition: background .2s;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+}
+.deep-cta:hover { background: rgba(201,161,94,.07); }
+.deep-cta-text { font-size: .83rem; color: var(--smoke); line-height: 1.5; }
+.deep-cta-text strong { color: var(--hanji); display: block; margin-bottom: .15rem; }
+.deep-cta-arrow { color: var(--gold); font-size: 1.1rem; flex-shrink: 0; }
+
+/* 심층 접수 확인 */
+.receipt-box {
+  background: rgba(201,161,94,.07);
+  border: 1px solid rgba(201,161,94,.35);
+  border-radius: 14px;
+  padding: 1.5rem;
+  text-align: center;
+  margin-top: 1rem;
+}
+.receipt-icon { font-size: 1.6rem; margin-bottom: .6rem; }
+.receipt-title {
+  font-family: var(--ff-disp);
+  font-size: 1.05rem;
+  color: var(--gold);
+  margin-bottom: .45rem;
+}
+.receipt-desc { font-size: .83rem; color: var(--smoke); line-height: 1.65; }
+.receipt-desc strong { color: var(--hanji); }
+
+/* 버튼 행 */
+.btn-row {
+  display: flex;
+  gap: .65rem;
+  margin-top: 1.25rem;
+}
+.btn-recast {
+  flex: 1;
+  padding: .65rem;
+  border-radius: 99px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--smoke);
+  font-family: var(--ff-body);
+  font-size: .82rem;
+  cursor: pointer;
+  transition: color .2s, border-color .2s;
+}
+.btn-recast:hover { color: var(--hanji); border-color: var(--gold); }
+
+@media (max-width: 480px) {
+  .cat-grid { grid-template-columns: repeat(2, 1fr); }
+  .card { padding: 1.4rem 1.1rem 2rem; }
+  .yao-bar.yang .seg { width: 56px; }
+  .yao-bar.yin  .seg { width: 22px; }
+}
+</style>
+</head>
+<body>
+
+<div class="brand"><a href="index.html">周易 · KOREAN ORACLE</a></div>
+
+<div class="card">
+  <h1 class="card-title">괘를 뽑아 물으세요</h1>
+  <p class="card-sub">카테고리를 고르고 동전을 던지세요.<br>
+    상황을 적으면 Claude AI 심층 상담으로 연결됩니다.</p>
+
+  <!-- ① 카테고리 -->
+  <div class="section-label">고민 카테고리 <span style="color:var(--red)">*</span></div>
+  <div class="cat-grid">
+    <button class="cat-btn" data-cat="연애"    onclick="selectCat(this)">연애</button>
+    <button class="cat-btn" data-cat="직장"    onclick="selectCat(this)">직장</button>
+    <button class="cat-btn" data-cat="학업"    onclick="selectCat(this)">학업</button>
+    <button class="cat-btn" data-cat="인간관계" onclick="selectCat(this)">인간관계</button>
+    <button class="cat-btn" data-cat="금전"    onclick="selectCat(this)">금전</button>
+    <button class="cat-btn" data-cat="건강"    onclick="selectCat(this)">건강</button>
+  </div>
+
+  <!-- ② 자유 텍스트 -->
+  <div class="section-label">상황 서술 <span style="color:var(--smoke)">(선택 · 심층 상담)</span></div>
+  <textarea class="situation-textarea" id="situationText"
+    placeholder="지금 겪고 있는 상황을 구체적으로 적어주세요.&#10;예) 3년 사귄 남자친구와 결혼을 고민 중인데 가치관 차이가…"
+    oninput="updateBtn()"></textarea>
+  <p class="situation-note">
+    비워두면 <em>즉시 간단 해석</em> · 상황을 적으면 <em>Claude AI 심층 상담 신청</em>으로 연결
+  </p>
+
+  <!-- ③ 점치기 버튼 -->
+  <button class="btn-cast" id="btnCast" onclick="startCast()" disabled>
+    ☰&nbsp; 동전을 던져 괘를 뽑는다
+  </button>
+
+  <!-- ④ 효 막대 보드 -->
+  <div class="cast-board" id="castBoard"></div>
+
+  <!-- ⑤ 카드 리빌 -->
+  <div class="card-reveal" id="cardReveal">
+    <div class="card-flip" id="cardFlip">
+      <div class="card-face"><img id="cardImg" src="" alt="괘 카드"></div>
+      <div class="card-back">☰</div>
+    </div>
+  </div>
+
+  <!-- ⑥ 결과 -->
+  <div class="result-wrap" id="resultWrap"></div>
+</div>
+
+<script>
+/* ── 데이터 ── */
+const DATA = window.ORACLE_DATA || [];
+const IDX  = {};
+DATA.forEach(r => { IDX[`${r.hexa}-${r.yao}`] = r; });
+
+/* ── 효 판정 ── */
+const isYang     = v => v===7||v===9;
+const isChanging = v => v===6||v===9;
+
+function throwCoin() {
+  const c = [Math.random()<.5?2:3, Math.random()<.5?2:3, Math.random()<.5?2:3];
+  return c.reduce((a,b)=>a+b,0);
+}
+
+function trigramVal(lines) {
+  let v=0;
+  lines.forEach((l,i)=>{ if(isYang(l)) v|=(1<<i); });
+  return v;
+}
+
+const HEX_TABLE = {
+  7:{7:1, 0:12,1:25,2:6, 4:33,3:44,5:13,6:10},
+  0:{7:11,0:2, 1:24,2:7, 4:15,3:46,5:36,6:19},
+  1:{7:34,0:16,1:51,2:40,4:62,3:32,5:55,6:54},
+  2:{7:5, 0:8, 1:3, 2:29,4:39,3:48,5:63,6:60},
+  4:{7:26,0:23,1:27,2:4, 4:52,3:18,5:22,6:41},
+  3:{7:9, 0:20,1:42,2:59,4:53,3:57,5:37,6:61},
+  5:{7:14,0:35,1:21,2:64,4:56,3:50,5:30,6:38},
+  6:{7:43,0:45,1:17,2:47,4:31,3:28,5:49,6:58}
+};
+
+function linesToHexaNum(lines) {
+  const lower = trigramVal(lines.slice(0,3));
+  const upper = trigramVal(lines.slice(3,6));
+  return (HEX_TABLE[upper]&&HEX_TABLE[upper][lower])||1;
+}
+
+/* ── 상태 ── */
+let selectedCat = '';
+
+function selectCat(el) {
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  selectedCat = el.dataset.cat;
+  updateBtn();
+  resetBoard();
+}
+
+function updateBtn() {
+  document.getElementById('btnCast').disabled = !selectedCat;
+}
+
+/* ── 효 막대 행 ── */
+function buildRow(idx, v) {
+  const yang     = isYang(v);
+  const changing = isChanging(v);
+  const labels   = ['初','二','三','四','五','上'];
+  const segs = yang
+    ? `<span class="seg"></span>`
+    : `<span class="seg"></span><span class="seg"></span>`;
+  return `<div class="yao-row" id="irow-${idx}">
+    <span class="yao-label">${labels[idx]}爻</span>
+    <div class="yao-bar ${yang?'yang':'yin'}${changing?' changing':''}">
+      ${segs}
+    </div>
+    <span class="yao-num">${changing?'◈':''}</span>
+  </div>`;
+}
+
+function delay(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+/* ── 캐스팅 ── */
+async function startCast() {
+  const btn = document.getElementById('btnCast');
+  btn.disabled = true;
+  resetBoard();
+  hideResult();
+
+  const board = document.getElementById('castBoard');
+  const lines = [];
+
+  for(let i=0;i<6;i++){
+    await delay(320);
+    const v = throwCoin();
+    lines.push(v);
+    board.insertAdjacentHTML('beforeend', buildRow(i, v));
+    await delay(30);
+    document.getElementById(`irow-${i}`).classList.add('visible');
+  }
+
+  await delay(500);
+  showResult(lines);
+  btn.disabled = false;
+}
+
+/* ── 결과 표시 ── */
+function showResult(lines) {
+  const hexaNum = linesToHexaNum(lines);
+
+  // 변효 우선, 없으면 랜덤
+  const changingIdxs = lines.map((v,i)=>isChanging(v)?i:-1).filter(i=>i>=0);
+  const yaoIdx = changingIdxs.length > 0
+    ? changingIdxs[Math.floor(Math.random()*changingIdxs.length)]
+    : Math.floor(Math.random()*6);
+
+  const rec = IDX[`${hexaNum}-${yaoIdx+1}`];
+  if(!rec){ console.warn('record not found', hexaNum, yaoIdx+1); return; }
+
+  const catText = rec[selectedCat] || '—';
+  const hasDeepText = document.getElementById('situationText').value.trim().length > 0;
+
+  const deepSection = hasDeepText
+    ? `<button class="deep-cta" onclick="doDeep('${hexaNum}','${yaoIdx+1}')">
+        <div class="deep-cta-text">
+          <strong>Claude AI 심층 상담 신청</strong>
+          이 괘를 바탕으로 선생님이 상황에 맞는 해석문을 작성합니다
+        </div>
+        <span class="deep-cta-arrow">→</span>
+      </button>`
+    : `<button class="deep-cta" onclick="focusText()">
+        <div class="deep-cta-text">
+          <strong>더 자세한 상담이 필요하신가요?</strong>
+          상황을 적으면 Claude AI 심층 상담으로 연결됩니다
+        </div>
+        <span class="deep-cta-arrow">↑</span>
+      </button>`;
+
+  const wrap = document.getElementById('resultWrap');
+  wrap.innerHTML = `
+    <hr class="divider">
+    <span class="result-badge">간단 해석 · ${selectedCat}</span>
+    <div class="result-hexa">${rec.name||''}</div>
+    <div class="result-yao-label">${rec.yaoLabel||rec.yao+'효'}</div>
+    <div class="result-hj">${rec.hj||''}</div>
+    <div class="result-ko">${rec.ko||''}</div>
+    <div class="result-cat-box">
+      <div class="result-cat-label">${selectedCat} 조언</div>
+      <div class="result-cat-text">${catText}</div>
+    </div>
+    ${deepSection}
+    <div class="btn-row">
+      <button class="btn-recast" onclick="startCast()">다시 뽑기</button>
+    </div>
+  `;
+  wrap.classList.add('show');
+
+  // 카드 리빌
+  const cardNum = String(hexaNum).padStart(2, '0');
+  const cardFlip   = document.getElementById('cardFlip');
+  const cardReveal = document.getElementById('cardReveal');
+  cardFlip.classList.remove('revealed');
+  document.getElementById('cardImg').src = `cards/${cardNum}.webp`;
+  cardReveal.classList.add('show');
+  setTimeout(() => cardFlip.classList.add('revealed'), 120);
+}
+
+/* ── 심층 상담 접수 ── */
+async function doDeep(hexaNum, yao) {
+  const situation = document.getElementById('situationText').value.trim();
+  const rec = IDX[`${hexaNum}-${yao}`];
+  const hexaName = rec ? (rec.name || '') : '';
+
+  const wrap = document.getElementById('resultWrap');
+  const ctaBtn = wrap.querySelector('.deep-cta');
+  if(ctaBtn) ctaBtn.innerHTML = '<span style="opacity:.5">전송 중…</span>';
+
+  // review.html 링크 (괘 데이터를 URL 파라미터로 전달)
+  const params = new URLSearchParams({
+    hexa: hexaNum, yao, cat: selectedCat,
+    situation: situation.slice(0, 300)
+  });
+  const reviewLink = `${location.href.replace('intake.html','review.html')}?${params}`;
+
+  try {
+    await emailjs.send('service_5b8aukb', 'template_wgtuab9', {
+      category:   selectedCat,
+      hexa_num:   hexaNum,
+      hexa_name:  hexaName,
+      yao:        yao,
+      situation:  situation || '(미입력)',
+      review_link: reviewLink,
+      name:       '주역상담봇',
+      email:      'hwangko@honam.hs.kr'
+    });
+
+    if(ctaBtn) {
+      ctaBtn.outerHTML = `<div class="receipt-box">
+        <div class="receipt-icon">☯</div>
+        <div class="receipt-title">접수됐습니다</div>
+        <div class="receipt-desc">
+          <strong>${selectedCat}</strong> 카테고리로 상담 내용이 접수됐습니다.<br>
+          선생님이 괘 해석문을 작성하여<br>
+          <strong>24시간 이내</strong> 크몽 메시지로 보내드립니다.
+        </div>
+      </div>`;
+    }
+  } catch(err) {
+    console.error('[EmailJS]', err);
+    if(ctaBtn) ctaBtn.innerHTML = '⚠ 전송 실패 — 잠시 후 다시 시도해주세요.';
+  }
+}
+
+function focusText() {
+  document.getElementById('situationText').focus();
+  document.getElementById('situationText').scrollIntoView({ behavior:'smooth', block:'center' });
+}
+
+function resetBoard() {
+  document.getElementById('castBoard').innerHTML = '';
+}
+
+function hideResult() {
+  const wrap = document.getElementById('resultWrap');
+  wrap.classList.remove('show');
+  wrap.innerHTML = '';
+  const cardReveal = document.getElementById('cardReveal');
+  const cardFlip   = document.getElementById('cardFlip');
+  cardReveal.classList.remove('show');
+  cardFlip.classList.remove('revealed');
+  document.getElementById('cardImg').src = '';
+}
+</script>
+</body>
+</html>

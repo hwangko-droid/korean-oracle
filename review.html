@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>해석 초안 생성 · KOREAN ORACLE [관리자]</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<script src="data/oracle-data.js"></script>
+<style>
+:root {
+  --ink:   #0B0D12;
+  --hanji: #F3EDDE;
+  --gold:  #C9A15E;
+  --red:   #A63A2E;
+  --smoke: #8B8677;
+  --line:  rgba(201,161,94,.18);
+  --ff-disp: 'Nanum Myeongjo', serif;
+  --ff-body: 'Gowun Dodum', sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--ink);
+  color: var(--hanji);
+  font-family: var(--ff-body);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2.5rem 1rem 5rem;
+}
+
+.brand {
+  font-size: .72rem;
+  letter-spacing: .18em;
+  color: var(--smoke);
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+.admin-badge {
+  display: inline-block;
+  font-size: .68rem;
+  background: var(--red);
+  color: #fff;
+  padding: .15rem .6rem;
+  border-radius: 4px;
+  letter-spacing: .08em;
+  margin-left: .5rem;
+  vertical-align: middle;
+}
+
+.card {
+  width: 100%;
+  max-width: 680px;
+  background: #13151c;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 2rem 2rem 2.5rem;
+  margin-bottom: 1.2rem;
+}
+
+.card-title {
+  font-family: var(--ff-disp);
+  font-size: 1.3rem;
+  color: var(--gold);
+  margin-bottom: 1.2rem;
+}
+
+/* API 키 입력 */
+.key-row {
+  display: flex;
+  gap: .6rem;
+  margin-bottom: 1.5rem;
+}
+.key-input {
+  flex: 1;
+  background: #1c1f28;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--hanji);
+  font-family: monospace;
+  font-size: .85rem;
+  padding: .6rem .9rem;
+  outline: none;
+}
+.key-input:focus { border-color: var(--gold); }
+.btn-save-key {
+  background: var(--gold);
+  color: var(--ink);
+  border: none;
+  border-radius: 8px;
+  padding: .6rem 1rem;
+  font-size: .85rem;
+  cursor: pointer;
+  white-space: nowrap;
+  font-weight: 700;
+}
+
+/* 상담 정보 요약 */
+.info-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .35rem .8rem;
+  font-size: .88rem;
+  margin-bottom: 1.4rem;
+  padding: 1rem 1.2rem;
+  background: rgba(201,161,94,.06);
+  border-radius: 10px;
+  border: 1px solid var(--line);
+}
+.info-label { color: var(--smoke); white-space: nowrap; }
+.info-value { color: var(--hanji); }
+.situation-box {
+  grid-column: 1 / -1;
+  margin-top: .3rem;
+  padding: .7rem .9rem;
+  background: #1c1f28;
+  border-radius: 8px;
+  font-size: .85rem;
+  line-height: 1.6;
+  color: var(--hanji);
+  white-space: pre-wrap;
+}
+
+/* 초안 영역 */
+.draft-label {
+  font-size: .8rem;
+  color: var(--smoke);
+  letter-spacing: .08em;
+  margin-bottom: .5rem;
+}
+.draft-textarea {
+  width: 100%;
+  min-height: 280px;
+  background: #1c1f28;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--hanji);
+  font-family: var(--ff-body);
+  font-size: .95rem;
+  line-height: 1.75;
+  padding: 1rem 1.1rem;
+  resize: vertical;
+  outline: none;
+}
+.draft-textarea:focus { border-color: var(--gold); }
+
+.btn-row {
+  display: flex;
+  gap: .7rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+.btn-gen {
+  background: var(--gold);
+  color: var(--ink);
+  border: none;
+  border-radius: 10px;
+  padding: .75rem 1.6rem;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity .2s;
+}
+.btn-gen:disabled { opacity: .45; cursor: default; }
+.btn-copy {
+  background: transparent;
+  color: var(--gold);
+  border: 1px solid var(--gold);
+  border-radius: 10px;
+  padding: .75rem 1.4rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background .2s;
+}
+.btn-copy:hover { background: rgba(201,161,94,.1); }
+
+.status-msg {
+  font-size: .85rem;
+  margin-top: .7rem;
+  min-height: 1.2rem;
+  color: var(--smoke);
+}
+.status-msg.error { color: var(--red); }
+.status-msg.ok { color: #7ecb8a; }
+
+/* 효사 참고 */
+.ref-box {
+  font-size: .82rem;
+  color: var(--smoke);
+  line-height: 1.65;
+  padding: .9rem 1.1rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  margin-top: 1rem;
+}
+.ref-box strong { color: var(--gold); }
+</style>
+</head>
+<body>
+
+<div class="brand">
+  KOREAN ORACLE · 해석 초안 생성
+  <span class="admin-badge">ADMIN</span>
+</div>
+
+<!-- 상담 정보 카드 -->
+<div class="card" id="infoCard">
+  <div class="card-title">상담 접수 내용</div>
+  <div class="info-grid" id="infoGrid">
+    <div class="info-label">카테고리</div><div class="info-value" id="iCat">—</div>
+    <div class="info-label">뽑힌 괘</div><div class="info-value" id="iHexa">—</div>
+    <div class="info-label">효</div><div class="info-value" id="iYao">—</div>
+    <div class="info-label">효사(한자)</div><div class="info-value" id="iHj">—</div>
+    <div class="info-label">캐주얼 해석</div><div class="info-value" id="iKo">—</div>
+    <div class="info-label">카테고리 조언</div><div class="info-value" id="iCatText">—</div>
+    <div class="info-label">고객 상황</div>
+    <div><div class="situation-box" id="iSituation">—</div></div>
+  </div>
+</div>
+
+<!-- 초안 생성 카드 -->
+<div class="card">
+  <div class="card-title">Claude 해석 초안</div>
+
+  <!-- API 키 -->
+  <div class="key-row">
+    <input class="key-input" id="apiKey" type="password" placeholder="OpenRouter API 키 (sk-or-v1-…)" autocomplete="off">
+    <button class="btn-save-key" onclick="saveKey()">저장</button>
+  </div>
+
+  <div class="draft-label">DRAFT — 수정 후 크몽에 붙여넣기</div>
+  <textarea class="draft-textarea" id="draftArea" placeholder="[초안 생성] 버튼을 누르면 Claude가 해석문 초안을 작성합니다."></textarea>
+
+  <div class="btn-row">
+    <button class="btn-gen" id="btnGen" onclick="generate()">☰ 초안 생성</button>
+    <button class="btn-copy" onclick="copyDraft()">복사</button>
+  </div>
+  <div class="status-msg" id="statusMsg"></div>
+</div>
+
+<script>
+/* ── URL 파라미터 파싱 ── */
+const p = new URLSearchParams(location.search);
+const hexaNum  = parseInt(p.get('hexa') || '1');
+const yaoNum   = parseInt(p.get('yao')  || '1');
+const cat      = p.get('cat') || '';
+const situation = p.get('situation') || '';
+
+/* ── oracle-data.js 로드 대기 후 초기화 ── */
+function init() {
+  if(!window.ORACLE_DATA){ setTimeout(init, 100); return; }
+
+  const IDX = {};
+  ORACLE_DATA.forEach(r => { IDX[`${r.hexa}-${r.yao}`] = r; });
+  const rec = IDX[`${hexaNum}-${yaoNum}`];
+
+  document.getElementById('iCat').textContent       = cat || '—';
+  document.getElementById('iYao').textContent       = yaoNum + '효';
+  document.getElementById('iSituation').textContent = situation || '(미입력)';
+
+  if(rec) {
+    document.getElementById('iHexa').textContent    = `${hexaNum}번 ${rec.name || ''}`;
+    document.getElementById('iHj').textContent      = rec.hj || '—';
+    document.getElementById('iKo').textContent      = rec.ko || '—';
+    document.getElementById('iCatText').textContent = (cat && rec[cat]) ? rec[cat] : '—';
+  }
+
+  // 저장된 API 키 복원
+  const saved = localStorage.getItem('or_key');
+  if(saved) document.getElementById('apiKey').value = saved;
+}
+init();
+
+/* ── API 키 저장 ── */
+function saveKey() {
+  const k = document.getElementById('apiKey').value.trim();
+  if(k) { localStorage.setItem('or_key', k); setStatus('API 키 저장됨', 'ok'); }
+}
+
+/* ── 상태 메시지 ── */
+function setStatus(msg, type='') {
+  const el = document.getElementById('statusMsg');
+  el.textContent = msg;
+  el.className = 'status-msg' + (type ? ' ' + type : '');
+}
+
+/* ── 초안 생성 ── */
+async function generate() {
+  const apiKey = document.getElementById('apiKey').value.trim();
+  if(!apiKey){ setStatus('API 키를 먼저 입력하세요.', 'error'); return; }
+
+  if(!window.ORACLE_DATA){ setStatus('데이터 로딩 중…'); return; }
+  const IDX = {};
+  ORACLE_DATA.forEach(r => { IDX[`${r.hexa}-${r.yao}`] = r; });
+  const rec = IDX[`${hexaNum}-${yaoNum}`];
+  if(!rec){ setStatus('레코드를 찾을 수 없습니다.', 'error'); return; }
+
+  const catText = (cat && rec[cat]) ? rec[cat] : '';
+
+  const prompt = `당신은 주역(周易) 해석 전문 상담사입니다. 고객의 상황에 맞는 따뜻하고 통찰력 있는 해석문을 작성해주세요.
+
+[뽑힌 괘]
+${hexaNum}번 ${rec.name || ''} · ${yaoNum}효
+효사(한자): ${rec.hj || ''}
+효사 뜻: ${rec.ko || ''}
+학술 해설: ${rec['do'] || ''}
+
+[카테고리]
+${cat}
+
+[카테고리 기본 조언]
+${catText || '(없음)'}
+
+[고객이 적은 상황]
+${situation || '(미입력)'}
+
+위 내용을 바탕으로 다음 조건에 맞게 해석문을 작성해주세요:
+- 분량: 350~500자
+- 톤: 따뜻하고 진지하며 희망적
+- 괘의 상징과 의미를 자연스럽게 녹여서
+- 고객의 "${cat}" 상황에 직접적으로 연결
+- 크몽 메시지로 바로 전송할 수 있는 완성된 글
+- 인사말·서명 불필요, 해석 본문만`;
+
+  const btn = document.getElementById('btnGen');
+  btn.disabled = true;
+  setStatus('Claude가 해석 초안을 작성 중입니다…');
+  document.getElementById('draftArea').value = '';
+
+  try {
+    const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+        'HTTP-Referer': 'https://korean-oracle.local',
+        'X-Title': 'Korean Oracle'
+      },
+      body: JSON.stringify({
+        model: 'anthropic/claude-sonnet-4-5',
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: 1024,
+        temperature: 0.7
+      })
+    });
+
+    if(!res.ok) {
+      const err = await res.json().catch(()=>({}));
+      throw new Error(err.error?.message || `HTTP ${res.status}`);
+    }
+
+    const data = await res.json();
+    const draft = data.choices?.[0]?.message?.content || '';
+    document.getElementById('draftArea').value = draft.trim();
+    setStatus('✓ 초안 생성 완료 — 수정 후 복사하세요.', 'ok');
+  } catch(err) {
+    setStatus('오류: ' + err.message, 'error');
+    console.error(err);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+/* ── 복사 ── */
+async function copyDraft() {
+  const text = document.getElementById('draftArea').value;
+  if(!text){ setStatus('초안이 없습니다.', 'error'); return; }
+  try {
+    await navigator.clipboard.writeText(text);
+    setStatus('✓ 클립보드에 복사됐습니다.', 'ok');
+  } catch {
+    setStatus('복사 실패 — 직접 선택 후 Ctrl+C 하세요.', 'error');
+  }
+}
+</script>
+</body>
+</html>
